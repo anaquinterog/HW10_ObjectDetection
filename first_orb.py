@@ -2,8 +2,8 @@ import cv2
 import numpy as np
 
 # Load images
-image1 = cv2.imread('/Users/anabi/Documents/GitHub/HW10_ObjectDetection/Screen Shot 2024-05-05 at 1.46.39 PM.png')
-image2 = cv2.imread('/Users/anabi/Documents/GitHub/HW10_ObjectDetection/Screen Shot 2024-05-05 at 1.46.39 PM.png')
+image1 = cv2.imread('/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/first_image.png')
+image2 = cv2.imread('/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/first_image.png')
 
 # Resize images
 image1 = cv2.resize(image1, (0,0), None, 0.4, 0.4)
