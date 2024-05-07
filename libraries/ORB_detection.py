@@ -20,9 +20,9 @@ def detect_features(image):
     Returns:
         tuple: Keypoints and descriptors of the image.
     """
-    orb = cv.ORB_create(nfeatures=2000)  # Create an ORB object, nfetures is the maximum number of features to retain
-    keypoints, descriptors = orb.detectAndCompute(image, None)  # Detect keypoints and compute descriptors
-    return keypoints, descriptors
+    orbs = cv.ORB_create(nfeatures=2000)  # Create an ORB object, nfetures is the maximum number of features to retain
+    keypoints, descriptors = orbs.detectAndCompute(image, None)  # Detect keypoints and compute descriptors
+    return orbs, keypoints, descriptors
 
 def match_features(desc1, desc2):
     """
@@ -42,3 +42,20 @@ def match_features(desc1, desc2):
         if m.distance < 0.75 * n.distance:  # If the distance is less than 0.7 times the next closest distance
             good_matches.append([m])
     return good_matches
+
+
+def draw_matches(image1, keypoints1, image2, keypoints2, matches):
+    """
+    Draw matches between two images.
+
+    Args:
+        image1 (np.ndarray): First image.
+        keypoints1 (list): Keypoints in the first image.
+        image2 (np.ndarray): Second image.
+        keypoints2 (list): Keypoints in the second image.
+        matches (list): Good matches to draw.
+
+    Returns:
+        np.ndarray: Image with drawn matches.
+    """
+    return cv.drawMatchesKnn(image1, keypoints1, image2, keypoints2, matches, None, flags=2) # Draw matches
