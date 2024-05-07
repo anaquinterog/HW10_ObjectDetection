@@ -28,19 +28,35 @@ def parse_args():
     """
     Parse command line arguments for image paths.
     
+    This function parses the command line arguments for the paths to the image file for object detection
+    and the video file. The function returns a Namespace object containing the parsed arguments.
+
     Returns:
         Namespace: Parsed command line arguments with paths to the images.
     """
     parser = argparse.ArgumentParser(description='Open a video file and display its frames')
-    parser.add_argument('--img_obj', required=True, help='Path to the image file for object detection')
-    parser.add_argument('--video', required=True, help='Path to the video file')
+    parser.add_argument('--img_obj', required=True,
+                        help='Path to the image file for object detection')
+    parser.add_argument('--video', required=True,
+                        help='Path to the video file')
     args = parser.parse_args()
     return args
 
 def run_pipeline(video_path, img_obj_path):
+    """
+    Runs the pipeline to detect and track objects in a video.
 
-    video = vid.open_video(video_path)
-    image = orb.load_image(img_obj_path)
+    Args:
+        video_path (str): Path to the video file.
+        img_obj_path (str): Path to the image file for object detection.
+
+    Returns:
+        None
+
+    This function opens a video file and detects objects in it using the ORB feature detector. It initializes variables for tracking the crossing count and displays the video frames with lines and text overlays. The function updates the crossing count based on the position of a circle in each frame and displays the crossing counts on the frames.
+
+    """
+
        ##INPUTS: IMAGE. OUTPUTS:  orbs, keypoints, descriptors.
     orbs, ref_keyp, ref_desc = orb.detect_features(image)
 
@@ -51,6 +67,8 @@ def run_pipeline(video_path, img_obj_path):
     prev_position = None
     crossing_left_to_right = 0
     crossing_right_to_left = 0
+    centroid = (320, 240)  # Adjust the centroid position as needed
+
 
 
     while True:
@@ -68,18 +86,18 @@ def run_pipeline(video_path, img_obj_path):
 
         # Update the crossing count
         if prev_position is not None:
-            crossing = cnt.count_crossings(prev_position, circle_position, mid_line_x)
+            crossing = cnt.count_crossings(prev_position, centroid, mid_line_x)
             if crossing == 1:
                 crossing_left_to_right += 1
             elif crossing == -1:
                 crossing_right_to_left += 1
 
         # Store the current position for the next iteration
-        prev_position = circle_position
+        prev_position = centroid
 
           # Add text overlays
         cv.line(frame, (0, mid_line_x), (frame.shape[1], mid_line_x), (0, 255, 0), 2)  # Draw mid-line
-#        cv.circle(frame, (circle_position, 200), 50, (0, 0, 255), -1)  # Draw circle
+        cv.circle(frame, (centroid, 200), 50, (0, 0, 255), -1)  # Draw circle
         cv.putText(frame, f"Crossings L to R: {crossing_left_to_right}", (10, 30), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         cv.putText(frame, f"Crossings R to L: {crossing_right_to_left}", (10, 70), cv.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2)
         cv.imshow("Frame", frame)
@@ -123,20 +141,18 @@ def display_images(images):
     cv.destroyAllWindows()
 
 if __name__ == '__main__':
-    """
-    args = parse_args() # Parse command line arguments
-    image1 = load_and_resize_image(args.image1) # Load and resize the image
-    image2 = load_and_resize_image(args.image2)
-    keypoints1, descriptors1 = detect_features(image1) # Detect features in the images
-    keypoints2, descriptors2 = detect_features(image2)
-    good_matches = match_features(descriptors1, descriptors2) # Match features
-    matched_image = draw_matches(image1, keypoints1, image2, keypoints2, good_matches) 
-    display_images({'image1': image1, 'image2': image2, 'Matches': matched_image}) # Display the images
-"""
-    
 
     video_path = parse_args().video  # Get the path to the video file from command-line arguments
     img_obj_path = parse_args().img_obj  # Get the path to the image file for object detection
+
+    video = vid.open_video(video_path)
+    image = orb.load_image(img_obj_path)
+
+    keypoints1, descriptors1 = orb.detect_features(video) # Detect features in the images
+    keypoints2, descriptors2 = orb.detect_features(image)
+    good_matches = orb.match_features(descriptors1, descriptors2) # Match features
+    matched_image = orb.draw_matches(video, keypoints1, image, keypoints2, good_matches) 
+    display_images({'image1': video, 'image2': image, 'Matches': matched_image}) # Display the images
 
     cap = vid.open_video(video_path)  # Open the video file
     if cap is not None:
@@ -148,3 +164,4 @@ if __name__ == '__main__':
             if cv.waitKey(25) & 0xFF == ord('q'):  # Exit loop if 'q' is pressed
                 break
         vid.close_video(cap)  # Close the video file and destroy all windows
+
