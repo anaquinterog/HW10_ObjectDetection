@@ -12,7 +12,7 @@ EXAMPLE TERMINAL CODE:
 $ python object_tracking.py --img_obj truck.png --video vid_sequence.mp4
 
 MY TERMINAL CODE:
-python object_tracking.py  --img_obj "/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/first_image.png"   --video "/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/IMG_1256.MOV"
+python object_tracking.py  --img_obj "/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/IMG_E6CCE3F1A4BC-1.jpeg"   --video "/Users/anabi/Documents/GitHub/HW10_ObjectDetection/images/IMG_1256.MOV"
 
 """
 # Importing the necessary libraries
