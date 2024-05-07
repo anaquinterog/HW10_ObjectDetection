@@ -1,5 +1,4 @@
 import cv2 as cv
-import numpy as np
 
 def load_image(image_path):
     """Load the reference image."""

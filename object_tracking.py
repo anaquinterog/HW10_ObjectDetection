@@ -17,8 +17,6 @@ python object_tracking.py  --img_obj "/Users/anabi/Documents/GitHub/HW10_ObjectD
 """
 # Importing the necessary libraries
 import cv2 as cv
-import numpy as np
-import matplotlib.pyplot as plt
 import argparse
 import libraries.ORB_detection as orb
 import libraries.video as vid 
@@ -140,28 +138,47 @@ def display_images(images):
             break
     cv.destroyAllWindows()
 
-if __name__ == '__main__':
+"""
+Script to detect and track an object in a video stream.
 
-    video_path = parse_args().video  # Get the path to the video file from command-line arguments
-    img_obj_path = parse_args().img_obj  # Get the path to the image file for object detection
+This script opens a video file and detects the object in the first frame. It then
+tracks the object in the video by matching its features between frames.
+
+The script displays the video frames with the object detection and tracking on them.
+
+This script is a demonstration of the following OpenCV features:
+
+* Reading video frames from a video file
+* Detecting ORB features in an image
+* Matching ORB features between two images
+* Drawing matches between two images
+
+Args:
+    video_path (str): Path to the video file.
+    img_obj_path (str): Path to the image file for object detection.
+"""
+if __name__ == '__main__':
+    video_path = parse_args().video
+    img_obj_path = parse_args().img_obj
 
     video = vid.open_video(video_path)
     image = orb.load_image(img_obj_path)
 
-    keypoints1, descriptors1 = orb.detect_features(video) # Detect features in the images
+    keypoints1, descriptors1 = orb.detect_features(video)
     keypoints2, descriptors2 = orb.detect_features(image)
-    good_matches = orb.match_features(descriptors1, descriptors2) # Match features
-    matched_image = orb.draw_matches(video, keypoints1, image, keypoints2, good_matches) 
-    display_images({'image1': video, 'image2': image, 'Matches': matched_image}) # Display the images
+    good_matches = orb.match_features(descriptors1, descriptors2)
+    matched_image = orb.draw_matches(video, keypoints1, image, keypoints2, good_matches)
+    display_images({'image1': video, 'image2': image, 'Matches': matched_image})
 
-    cap = vid.open_video(video_path)  # Open the video file
+    cap = vid.open_video(video_path)
     if cap is not None:
         while True:
-            frame = vid.read_frame(cap)  # Read a frame from the video
+            frame = vid.read_frame(cap)
             if frame is None:
-                break  # If frame couldn't be captured, exit the loop
-            cv.imshow('Frame', frame)  # Display the frame
-            if cv.waitKey(25) & 0xFF == ord('q'):  # Exit loop if 'q' is pressed
                 break
-        vid.close_video(cap)  # Close the video file and destroy all windows
+            cv.imshow('Frame', frame)
+            if cv.waitKey(25) & 0xFF == ord('q'):
+                break
+        vid.close_video(cap)
+
 
